@@ -9,14 +9,14 @@
  * 
  * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
  */
-using System;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-
 namespace qrypu.Core.Crypto
 {
-    public abstract class Skein
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+
+    public abstract class Skein : ICryptoHash
     {
         /// <summary>
         /// Creates a new instance of Skein hasher configured for the result bit length specified
@@ -100,24 +100,24 @@ namespace qrypu.Core.Crypto
         protected abstract void Compress(ref SkeinState State, byte[] buffer, UInt64 bitCount);
 
         /// <summary>
-        /// Compute hash from stream
+        /// Compute hash from message source
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="source">Stream or buffer</param>
         /// <returns>Hash computed</returns>
-        public byte[] Compute(Stream stream)
+        public byte[] Compute(HashMessageSource source)
         {
             // INIT
             // Init hash buffer
             var state = Init();
             var bufferLength = this._bufferLength;
-            var remain = stream.Length; // Skein needs to know data length
+            var remain = source.Length; // Skein needs to know data length
 
             // UPDATE
             // Transform complete blocks
             byte[] buffer = new byte[bufferLength];
             long allBytesRead = 0;
             int bytesRead;
-            while (((bytesRead = stream.Read(buffer, 0, bufferLength)) == bufferLength)
+            while (((bytesRead = source.Read(buffer, 0, bufferLength)) == bufferLength)
                 && ((remain -= bytesRead) > 0)) // This condition order enable full final block
             {
                 allBytesRead += bytesRead;
@@ -139,20 +139,6 @@ namespace qrypu.Core.Crypto
 
             // Format final hash
             return FinalHash(state);
-        }
-
-        /// <summary>
-        /// Compute hash from a byte buffer.
-        /// Uses a MemomyStream instance and call Compute(stream)
-        /// </summary>
-        /// <param name="data">Source bytes</param>
-        /// <returns>Hash computed</returns>
-        public byte[] Compute(byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-            {
-                return Compute(stream);
-            }
         }
 
         private SkeinState Init()
@@ -540,7 +526,7 @@ namespace qrypu.Core.Crypto
         protected override byte[] HashFinal()
         {
             this._stream.Seek(0, SeekOrigin.Begin);
-            this._finalHash = this._skein.Compute(this._stream);
+            this._finalHash = this._skein.Compute(new StreamMessageReader(this._stream));
             return this._finalHash;
         }
 

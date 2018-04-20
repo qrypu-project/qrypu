@@ -8,18 +8,18 @@
  * 
  * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
  */
-using System;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-
 namespace qrypu.Core.Crypto
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+
     /// <summary>
     /// Grøstl Hash implementation based on its 64 bit optimized version
     /// <see cref="https://131002.net/blake"/>
     /// </summary>
-    public abstract class Blake
+    public abstract class Blake : ICryptoHash
     {
         /// <summary>
         /// Permut table for Blake
@@ -129,11 +129,11 @@ namespace qrypu.Core.Crypto
         protected abstract byte[] FinalHash();
 
         /// <summary>
-        /// Compute hash from stream
+        /// Compute hash from message source
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="source">Stream or buffer</param>
         /// <returns>Hash computed</returns>
-        public byte[] Compute(Stream stream)
+        public byte[] Compute(HashMessageSource source)
         {
             // INIT
             // Init hash variables (in derivate class)
@@ -146,7 +146,7 @@ namespace qrypu.Core.Crypto
             UInt64 bitLength = 0;
             UInt64 blockCount = 0;
             int bytesRead;
-            while ((bytesRead = stream.Read(buffer, 0, bufferLength)) == bufferLength)
+            while ((bytesRead = source.Read(buffer, 0, bufferLength)) == bufferLength)
             {
                 bitLength += (UInt64)(bytesRead << 3);
                 Compress(buffer, bitLength);
@@ -188,20 +188,6 @@ namespace qrypu.Core.Crypto
 
             // Finalize hash and truncate (Output Transformation)
             return FinalHash();
-        }
-
-        /// <summary>
-        /// Compute hash from a byte buffer.
-        /// Uses a MemomyStream instance and call Compute(stream)
-        /// </summary>
-        /// <param name="data">Source bytes</param>
-        /// <returns>Hash computed</returns>
-        public byte[] Compute(byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-            {
-                return Compute(stream);
-            }
         }
     }
 
@@ -513,7 +499,7 @@ namespace qrypu.Core.Crypto
         protected override byte[] HashFinal()
         {
             this._stream.Seek(0, SeekOrigin.Begin);
-            this._finalHash = this._blake.Compute(this._stream);
+            this._finalHash = this._blake.Compute(new StreamMessageReader(this._stream));
             return this._finalHash;
         }
 
