@@ -14,30 +14,30 @@ namespace qrypu.Core.Crypto
     /// <summary>
     /// Message source for hashing.
     /// </summary>
-    public abstract class HashMessageSource
+    public abstract class MessageToHashReader
     {
         public abstract int Read(byte[] buffer, int offset, int count);
         public abstract long Length { get; }
 
-        public static implicit operator HashMessageSource(Stream stream)
+        public static implicit operator MessageToHashReader(Stream stream)
         {
-            return new StreamMessageReader(stream);
+            return new StreamToHashReader(stream);
         }
 
-        public static implicit operator HashMessageSource(byte[] buffer)
+        public static implicit operator MessageToHashReader(byte[] buffer)
         {
-            return new BufferMessageReader(buffer);
+            return new BufferToHashReader(buffer);
         }
     }
 
     /// <summary>
     /// Wrapper for streams
     /// </summary>
-    public class StreamMessageReader : HashMessageSource
+    public class StreamToHashReader : MessageToHashReader
     {
         private readonly Stream _stream;
 
-        public StreamMessageReader(Stream stream)
+        public StreamToHashReader(Stream stream)
         {
             this._stream = stream;
         }
@@ -53,12 +53,12 @@ namespace qrypu.Core.Crypto
     /// <summary>
     /// Wrapper for byte arrays
     /// </summary>
-    public class BufferMessageReader : HashMessageSource
+    public class BufferToHashReader : MessageToHashReader
     {
         private readonly byte[] _buffer;
         private int _pointer;
 
-        public BufferMessageReader(byte[] buffer)
+        public BufferToHashReader(byte[] buffer)
         {
             this._buffer = buffer;
             this._pointer = 0;

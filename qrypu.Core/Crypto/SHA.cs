@@ -19,7 +19,7 @@ namespace qrypu.Core.Crypto
             return result;
         }
 
-        public byte[] Compute(HashMessageSource source)
+        public byte[] Compute(MessageToHashReader source)
         {
             using (var stream = new MemoryStream())
             {

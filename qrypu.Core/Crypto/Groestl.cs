@@ -252,7 +252,7 @@ namespace qrypu.Core.Crypto
         /// </summary>
         /// <param name="source">Stream or buffer</param>
         /// <returns>Hash computed</returns>
-        public byte[] Compute(HashMessageSource source)
+        public byte[] Compute(MessageToHashReader source)
         {
             // INIT
             // Init hash buffer
@@ -771,7 +771,7 @@ namespace qrypu.Core.Crypto
         protected override byte[] HashFinal()
         {
             this._stream.Seek(0, SeekOrigin.Begin);
-            this._finalHash = this._groestl.Compute(new StreamMessageReader(this._stream));
+            this._finalHash = this._groestl.Compute(new StreamToHashReader(this._stream));
             return this._finalHash;
         }
 

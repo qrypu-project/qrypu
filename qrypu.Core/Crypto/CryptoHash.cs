@@ -53,7 +53,7 @@ namespace qrypu.Core.Crypto
         /// </summary>
         /// <param name="source">Stream or buffer</param>
         /// <returns>Hash resultant</returns>
-        byte[] Compute(HashMessageSource source);
+        byte[] Compute(MessageToHashReader source);
     }
 
     /// <summary>

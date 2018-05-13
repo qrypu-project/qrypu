@@ -104,7 +104,7 @@ namespace qrypu.Core.Crypto
         /// </summary>
         /// <param name="source">Stream or buffer</param>
         /// <returns>Hash computed</returns>
-        public byte[] Compute(HashMessageSource source)
+        public byte[] Compute(MessageToHashReader source)
         {
             // INIT
             // Init hash buffer
@@ -161,12 +161,12 @@ namespace qrypu.Core.Crypto
             var count = this._stateWords;
 
             var block = new UInt64[count];
-#if !BIGENDIAN
+            #if !BIGENDIAN
             for (int b = 0; b < count; b++)
             {
                 block[b] = BitConverter.ToUInt64(buffer, b << 3);
             }
-#else
+            #else
             var leBuffer = new byte[bufferLength];
             Buffer.BlockCopy(buffer, 0, leBuffer, 0, bufferLength);
             Array.Reverse(leBuffer);
@@ -174,7 +174,7 @@ namespace qrypu.Core.Crypto
             {
                 block[b] = BitConverter.ToUInt64(leBuffer, i << 3);
             }
-#endif
+            #endif
             return block;
         }
     }
@@ -526,7 +526,7 @@ namespace qrypu.Core.Crypto
         protected override byte[] HashFinal()
         {
             this._stream.Seek(0, SeekOrigin.Begin);
-            this._finalHash = this._skein.Compute(new StreamMessageReader(this._stream));
+            this._finalHash = this._skein.Compute(new StreamToHashReader(this._stream));
             return this._finalHash;
         }
 

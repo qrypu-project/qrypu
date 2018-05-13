@@ -16,7 +16,7 @@ namespace qrypu.Core.Crypto
     using System.Security.Cryptography;
 
     /// <summary>
-    /// Grøstl Hash implementation based on its 64 bit optimized version
+    /// Blake Hash implementation based on its 64 bit optimized version
     /// <see cref="https://131002.net/blake"/>
     /// </summary>
     public abstract class Blake : ICryptoHash
@@ -133,7 +133,7 @@ namespace qrypu.Core.Crypto
         /// </summary>
         /// <param name="source">Stream or buffer</param>
         /// <returns>Hash computed</returns>
-        public byte[] Compute(HashMessageSource source)
+        public byte[] Compute(MessageToHashReader source)
         {
             // INIT
             // Init hash variables (in derivate class)
@@ -335,7 +335,7 @@ namespace qrypu.Core.Crypto
     }
 
     /// <summary>
-    /// Grøstl for 386 and 512 bit length hash result
+    /// Blake for 386 and 512 bit length hash result
     /// </summary>
     internal class Blake512 : Blake
     {
@@ -499,7 +499,7 @@ namespace qrypu.Core.Crypto
         protected override byte[] HashFinal()
         {
             this._stream.Seek(0, SeekOrigin.Begin);
-            this._finalHash = this._blake.Compute(new StreamMessageReader(this._stream));
+            this._finalHash = this._blake.Compute(new StreamToHashReader(this._stream));
             return this._finalHash;
         }
 
