@@ -16,7 +16,7 @@ namespace qrypu.Core.Crypto
     public enum CryptoHashName : byte
     {
         Sha256 = 0,
-        Sha1 = 1,
+        Sha224 = 1,
         Sha512 = 2,
         Sha384 = 3,
         Blake256 = 4,
@@ -66,13 +66,13 @@ namespace qrypu.Core.Crypto
             switch (hash)
             {
                 case CryptoHashName.Sha256:
-                    return SHA.Create(256);
-                case CryptoHashName.Sha1:
-                    return SHA.Create(160);
+                    return Sha2.Create(256);
+                case CryptoHashName.Sha224:
+                    return Sha2.Create(224);
                 case CryptoHashName.Sha512:
-                    return SHA.Create(512);
+                    return Sha2.Create(512);
                 case CryptoHashName.Sha384:
-                    return SHA.Create(384);
+                    return Sha2.Create(384);
                 case CryptoHashName.Blake256:
                     return Blake.Create(256);
                 case CryptoHashName.Blake224:

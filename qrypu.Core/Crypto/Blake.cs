@@ -64,23 +64,6 @@ namespace qrypu.Core.Crypto
         private int _bufferLength = 0;
         private byte _finalXor = 0;
         protected int _bitLen;
-        protected byte[] _sourceSalt = null;
-
-        /// <summary>
-        /// Optional Salt parameter for hashing
-        /// </summary>
-        public byte[] Salt
-        {
-            get
-            {
-                return this._sourceSalt;
-            }
-            set
-            {
-                this._sourceSalt = value;
-                InitSalt();
-            }
-        }
 
         /// <summary>
         /// Call to set result bit len and internal mode of operation
@@ -106,27 +89,25 @@ namespace qrypu.Core.Crypto
         }
 
         /// <summary>
-        /// Apply new Salt parameter
-        /// </summary>
-        protected abstract void InitSalt();
-
-        /// <summary>
         /// Initialize instance for hash computing
         /// </summary>
-        protected abstract void InitState();
+        /// <param name="hashState">Hash State initialized</param>
+        protected abstract void InitState(out IBlakeState hashState);
 
         /// <summary>
         /// Call hash Compress function with partial data
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="bitCount"></param>
-        protected abstract void Compress(byte[] buffer, UInt64 bitCount);
+        /// <param name="hashState">Current hash state</param>
+        /// <param name="buffer">New buffer to compress</param>
+        /// <param name="bitCount">Current bit count</param>
+        protected abstract void Compress(IBlakeState hashState, byte[] buffer, UInt64 bitCount);
 
         /// <summary>
         /// Process final state to hash format
         /// </summary>
+        /// <param name="hashState">Final hash state</param>
         /// <returns>Hash computed</returns>
-        protected abstract byte[] FinalHash();
+        protected abstract byte[] FinalHash(IBlakeState hashState);
 
         /// <summary>
         /// Compute hash from message source
@@ -138,7 +119,7 @@ namespace qrypu.Core.Crypto
             // INIT
             // Init hash variables (in derivate class)
             var bufferLength = this._bufferLength;
-            InitState();
+            InitState(out IBlakeState hashState);
 
             // UPDATE
             // Transform complete blocks
@@ -149,7 +130,7 @@ namespace qrypu.Core.Crypto
             while ((bytesRead = source.Read(buffer, 0, bufferLength)) == bufferLength)
             {
                 bitLength += (UInt64)(bytesRead << 3);
-                Compress(buffer, bitLength);
+                Compress(hashState, buffer, bitLength);
                 blockCount++;
             }
             bitLength += (UInt64)(bytesRead << 3);
@@ -171,7 +152,7 @@ namespace qrypu.Core.Crypto
 
             if (blocksLeft > 1) // if two extra blocks
             {
-                Compress(buffer, bitLength);
+                Compress(hashState, buffer, bitLength);
                 buffer = new byte[bufferLength];
             }
             // last extra block
@@ -183,12 +164,14 @@ namespace qrypu.Core.Crypto
                 buffer[bufferLength - (bufferLength >> 3) - 1] ^= this._finalXor;
                 if (blocksLeft == 2 || (blocksLeft == 1 && bytesRead == 0))
                     bitLength = 0;
-                Compress(buffer, bitLength);
+                Compress(hashState, buffer, bitLength);
             }
 
             // Finalize hash and truncate (Output Transformation)
-            return FinalHash();
+            return FinalHash(hashState);
         }
+
+        protected interface IBlakeState { };
     }
 
     /// <summary>
@@ -211,40 +194,41 @@ namespace qrypu.Core.Crypto
 
         private const int ROUNDS = 14;
 
-        private UInt32[] _hash;
-        private UInt32[] _block;
-        private UInt32[] _salt;
-        private UInt32[] _counter;
-
-        protected override void InitSalt()
+        private class Blake256State : IBlakeState
         {
-            if ((this._sourceSalt != null) && (this._sourceSalt.Length != 16))
-                throw new Exception("This mode requires 128bit salt");
-
-            _salt = Split(this._sourceSalt);
+            public UInt32[] H; // hash
+            public UInt32[] B; // block
+            public UInt32[] S; // salt
+            public UInt32[] C; // counter
         }
 
-        protected override void InitState()
+        protected override void InitState(out IBlakeState hashState)
         {
-            _block = new UInt32[16];
-            _salt = new UInt32[4] { 0, 0, 0, 0 };
-            _hash = new UInt32[8];
+            var result = new Blake256State()
+            {
+                B = new UInt32[16],
+                S = new UInt32[4] { 0, 0, 0, 0 },
+                H = new UInt32[8]
+            };
             if (this._bitLen == 224)
-                Array.Copy(_init224, _hash, 8);
+                Array.Copy(_init224, result.H, 8);
             else
-                Array.Copy(_init256, _hash, 8);
+                Array.Copy(_init256, result.H, 8);
+            hashState = result;
         }
 
-        protected override void Compress(byte[] buffer, UInt64 bitCount)
+        protected override void Compress(IBlakeState hashState, byte[] buffer, UInt64 bitCount)
         {
-            _block = Split(buffer);
-            _counter = SplitCounter(bitCount);
-            Compress(_hash, _block, _salt, _counter);
+            var state = (Blake256State)hashState;
+            state.B = Split(buffer);
+            state.C = SplitCounter(bitCount);
+            Compress(state.H, state.B, state.S, state.C);
         }
 
-        protected override byte[] FinalHash()
+        protected override byte[] FinalHash(IBlakeState hashState)
         {
-            var result = Join(_hash);
+            var state = (Blake256State)hashState;
+            var result = Join(state.H);
             if (this._bitLen == 224)
                 Array.Resize(ref result, 28);
             return result;
@@ -358,38 +342,39 @@ namespace qrypu.Core.Crypto
 
         private const int ROUNDS = 16;
 
-        private UInt64[] _hash;
-        private UInt64[] _block;
-        private UInt64[] _salt;
-
-        protected override void InitSalt()
+        private class Blake512State : IBlakeState
         {
-            if ((this._sourceSalt != null) && (this._sourceSalt.Length != 32))
-                throw new Exception("This mode requires 256bit salt");
-
-            _salt = Split(this._sourceSalt);
+            public UInt64[] H;
+            public UInt64[] B;
+            public UInt64[] S;
         }
 
-        protected override void InitState()
+        protected override void InitState(out IBlakeState hashState)
         {
-            _block = new UInt64[16];
-            _salt = new UInt64[4] { 0, 0, 0, 0 };
-            _hash = new UInt64[8];
+            var result = new Blake512State()
+            {
+                B = new UInt64[16],
+                S = new UInt64[4] { 0, 0, 0, 0 },
+                H = new UInt64[8]
+            };
             if (this._bitLen == 384)
-                Array.Copy(_init384, _hash, 8);
+                Array.Copy(_init384, result.H, 8);
             else
-                Array.Copy(_init512, _hash, 8);
+                Array.Copy(_init512, result.H, 8);
+            hashState = result;
         }
 
-        protected override void Compress(byte[] buffer, UInt64 bitCount)
+        protected override void Compress(IBlakeState hashState, byte[] buffer, UInt64 bitCount)
         {
-            _block = Split(buffer);
-            Compress(_hash, _block, _salt, new UInt64[] { bitCount, 0x0 });
+            var state = (Blake512State)hashState;
+            state.B = Split(buffer);
+            Compress(state.H, state.B, state.S, new UInt64[] { bitCount, 0x0 });
         }
 
-        protected override byte[] FinalHash()
+        protected override byte[] FinalHash(IBlakeState hashState)
         {
-            var result = Join(_hash);
+            var state = (Blake512State)hashState;
+            var result = Join(state.H);
             if (this._bitLen == 384)
                 Array.Resize(ref result, 48);
             return result;

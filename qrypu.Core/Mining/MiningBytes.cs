@@ -1,4 +1,10 @@
-﻿namespace qrypu.Core.Mining
+﻿/*
+ * (C) 2018 José Hurtado
+ * 
+ * ES:
+ * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
+ */
+namespace qrypu.Core.Mining
 {
     using System;
     using System.Security.Cryptography;

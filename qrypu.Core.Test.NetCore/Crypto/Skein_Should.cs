@@ -343,7 +343,7 @@ namespace qrypu.Core.Test.Crypto
             };
             #endregion
 
-            Pass_BatteryTest(NIST_TestMessages.Battery, hexExpHash, 224);
+            Pass_BatteryTest(NIST_TestMessages_SHA3.Battery, hexExpHash, 224);
         }
 
         [TestMethod]
@@ -677,7 +677,7 @@ namespace qrypu.Core.Test.Crypto
             };
             #endregion
 
-            Pass_BatteryTest(NIST_TestMessages.Battery, hexExpHash, 256);
+            Pass_BatteryTest(NIST_TestMessages_SHA3.Battery, hexExpHash, 256);
         }
 
         [TestMethod]
@@ -1011,7 +1011,7 @@ namespace qrypu.Core.Test.Crypto
             };
             #endregion
 
-            Pass_BatteryTest(NIST_TestMessages.Battery, hexExpHash, 384);
+            Pass_BatteryTest(NIST_TestMessages_SHA3.Battery, hexExpHash, 384);
         }
 
         [TestMethod]
@@ -1345,7 +1345,7 @@ namespace qrypu.Core.Test.Crypto
             };
             #endregion
 
-            Pass_BatteryTest(NIST_TestMessages.Battery, hexExpHash, 512);
+            Pass_BatteryTest(NIST_TestMessages_SHA3.Battery, hexExpHash, 512);
         }
 
         private void Pass_BatteryTest(string[] hexTestBatery, string[] hexExpHash, int bitLen)

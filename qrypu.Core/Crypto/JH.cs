@@ -219,7 +219,7 @@ namespace qrypu.Core.Crypto
             while ((bytesRead = source.Read(buffer, 0, BUFFER_LEN)) == BUFFER_LEN)
             {
                 allBytesRead += bytesRead;
-                Compression(hashState, buffer);
+                Compress(hashState, buffer);
                 blockCount++;
             }
             allBytesRead += bytesRead;
@@ -238,7 +238,7 @@ namespace qrypu.Core.Crypto
             // Process extra blocks
             if (blocksLeft > 1) // if two extra blocks
             {
-                Compression(hashState, buffer);
+                Compress(hashState, buffer);
                 buffer = new byte[BUFFER_LEN];
             }
             // last extra block
@@ -247,7 +247,7 @@ namespace qrypu.Core.Crypto
                 if (BitConverter.IsLittleEndian)
                     Array.Reverse(bytes);
                 Buffer.BlockCopy(bytes, 0, buffer, BUFFER_LEN - 8, 8);
-                Compression(hashState, buffer);
+                Compress(hashState, buffer);
             }
 
             var result = PlainHash(hashState);
@@ -299,7 +299,7 @@ namespace qrypu.Core.Crypto
             return result;
         }
 
-        private void Compression(UInt64[,] hashState, byte[] buffer)
+        private void Compress(UInt64[,] hashState, byte[] buffer)
         {
             var block = ToBlock(buffer);
 
