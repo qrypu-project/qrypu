@@ -16,4 +16,8 @@
     <ProjectReference Include="..\qrypu.Core\qrypu.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Crypto\QmhHuk_Avalanche\" />
+  </ItemGroup>
+
 </Project>

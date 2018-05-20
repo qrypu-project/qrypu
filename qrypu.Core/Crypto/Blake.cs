@@ -63,7 +63,12 @@ namespace qrypu.Core.Crypto
         /// </summary>
         private int _bufferLength = 0;
         private byte _finalXor = 0;
+
+        /// <summary>
+        /// Number of bits in hash result
+        /// </summary>
         protected int _bitLen;
+        public int BitLen => _bitLen;
 
         /// <summary>
         /// Call to set result bit len and internal mode of operation

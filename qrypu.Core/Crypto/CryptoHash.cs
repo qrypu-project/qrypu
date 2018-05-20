@@ -34,7 +34,11 @@ namespace qrypu.Core.Crypto
         Skein256 = 16,
         Skein224 = 17,
         Skein512 = 18,
-        Skein384 = 19
+        Skein384 = 19,
+        QmhHuk256 = 20,
+        QmhHuk224 = 21,
+        QmhHuk512 = 22,
+        QmhHuk384 = 23
     }
 
     /// <summary>
@@ -42,6 +46,11 @@ namespace qrypu.Core.Crypto
     /// </summary>
     public interface ICryptoHash
     {
+        /// <summary>
+        /// Numbert of bits in hash result
+        /// </summary>
+        int BitLen { get; }
+
         /// <summary>
         /// Config hash. Call one time per result bit length and compute any number of messages.
         /// </summary>
@@ -105,6 +114,14 @@ namespace qrypu.Core.Crypto
                     return Skein.Create(512);
                 case CryptoHashName.Skein384:
                     return Skein.Create(384);
+                case CryptoHashName.QmhHuk256:
+                    return QmhHuk.Create(256);
+                case CryptoHashName.QmhHuk224:
+                    return QmhHuk.Create(224);
+                case CryptoHashName.QmhHuk512:
+                    return QmhHuk.Create(512);
+                case CryptoHashName.QmhHuk384:
+                    return QmhHuk.Create(384);
                 default:
                     throw new ArgumentException();
             }

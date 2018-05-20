@@ -1,18 +1,19 @@
 ﻿/*
  * (C) 2018 José Hurtado
  * 
- * ES:
+ * ES: Manipulación de bytes para labrado
+ * 
  * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
  */
-namespace qrypu.Core.Mining
+namespace qrypu.Core.Farming
 {
     using System;
     using System.Security.Cryptography;
 
     /// <summary>
-    /// ES: Clase estática que contiene funciones de ayuda al proceso de minado
+    /// ES: Contiene funciones de ayuda al proceso de labrado
     /// </summary>
-    public static class MiningBytes
+    public static class FarmingBytes
     {
         /// <summary>
         /// ES: Desempaqueta una serie de bytes a partir de un formato comprimido como se define para
@@ -50,7 +51,7 @@ namespace qrypu.Core.Mining
 
         /// <summary>
         /// ES: Comparación de arrays de bytes.
-        /// Cumple contrato de delegado MiningChallenge
+        /// Cumple contrato de delegado FarmingChallenge
         /// </summary>
         /// <param name="data">ES: Bytes a comparar</param>
         /// <param name="target">ES: Valor de referencia</param>
@@ -70,7 +71,7 @@ namespace qrypu.Core.Mining
 
         /// <summary>
         /// ES: Comparación de arrays de bytes.
-        /// Cumple contrato de delegado MiningChallenge
+        /// Cumple contrato de delegado FarmingChallenge
         /// </summary>
         /// <param name="data">ES: Bytes a comparar</param>
         /// <param name="target">ES: Valor de referencia</param>

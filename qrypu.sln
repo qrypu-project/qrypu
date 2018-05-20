@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{0127F5E5-965A-4B7C-88E6-592AA3987DB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qrypu.Core", "qrypu.Core\qrypu.Core.csproj", "{9A28A3CA-8257-4A34-9EC5-F11488C37F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "qrypu.Core", "qrypu.Core\qrypu.Core.csproj", "{9A28A3CA-8257-4A34-9EC5-F11488C37F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qrypu.Core.Test.NetCore", "qrypu.Core.Test.NetCore\qrypu.Core.Test.NetCore.csproj", "{F1F0A2A2-3ED1-4957-98A6-22E00185866F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "qrypu.Core.Test.NetCore", "qrypu.Core.Test.NetCore\qrypu.Core.Test.NetCore.csproj", "{F1F0A2A2-3ED1-4957-98A6-22E00185866F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

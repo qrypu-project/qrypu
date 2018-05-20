@@ -1,36 +1,37 @@
 ﻿/*
  * (C) 2018 José Hurtado
  * 
- * ES:
+ * ES: Configuración de labrado
+ * 
  * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
  */
-namespace qrypu.Core.Mining
+namespace qrypu.Core.Farming
 {
     using qrypu.Core.Crypto;
 
     /// <summary>
-    /// ES: Contrato para prueba de hash minado
+    /// ES: Contrato para prueba de hash labrado
     /// </summary>
     /// <param name="candidate">ES: Hash candidato</param>
     /// <param name="challenge">ES: Formato o condición a cumplir</param>
     /// <returns>ES: true si se cumplen con la condición</returns>
-    public delegate bool MiningChallenge(byte[] candidate, byte[] challenge);
+    public delegate bool FarmingChallenge(byte[] candidate, byte[] challenge);
 
     /// <summary>
-    /// ES: Posición de Nonce en los datos minados
+    /// ES: Posición de Nonce en los datos labrados
     /// </summary>
-    public enum MiningNoncePosition { Head, Tail }
+    public enum FarmingNoncePosition { Head, Tail }
 
     /// <summary>
-    /// ES: Configuración de minado
+    /// ES: Configuración de labrado
     /// </summary>
-    public class MiningConfig
+    public class FarmingConfig
     {
         /// <summary>
         /// ES: el Nonce se puede poner al principio o al final de los datos originales antes de calcular el hash
         /// Por defecto: Tail (al final)
         /// </summary>
-        public MiningNoncePosition NoncePosition { get; set; }
+        public FarmingNoncePosition NoncePosition { get; set; }
 
         /// <summary>
         /// ES: el número de bytes del Nonce es variable, los valores más comunes serán 4 (UInt32) y 8 (UInt64)
@@ -46,7 +47,7 @@ namespace qrypu.Core.Mining
         public bool NonceInData { get; set; }
 
         /// <summary>
-        /// ES: indica si el minado empezará a probar desde Nonce = 0 (o una serie de bytes a cero), de lo contrario
+        /// ES: indica si el labrado empezará a probar desde Nonce = 0 (o una serie de bytes a cero), de lo contrario
         /// se empezará con un valor aleatorio
         /// Por defecto: false
         /// </summary>
@@ -72,7 +73,7 @@ namespace qrypu.Core.Mining
         /// LessOrEqualThan es similar al que se aplica en Bitcoin
         /// StartsWith busca una coincidencia al principio, que podría o no ser un número de ceros
         /// </summary>
-        public MiningChallenge Challenge { get; set; }
+        public FarmingChallenge Challenge { get; set; }
 
         /// <summary>
         /// El listado de algoritmos Hash a calcular, que puede ser un listado cualquiera de algoritmos
@@ -81,16 +82,16 @@ namespace qrypu.Core.Mining
         /// </summary>
         public CryptoHashName[] HashRecipe { get; set; }
 
-        public MiningConfig()
+        public FarmingConfig()
         {
-            this.NoncePosition = MiningNoncePosition.Tail;
+            this.NoncePosition = FarmingNoncePosition.Tail;
             this.NonceLength = 8;
             this.NonceInData = true;
             this.NonceFromZero = false;
             //this.FlexNonce = false;
 
-            this.Challenge = MiningBytes.LessOrEqualThan;
-            this.ChallengeValue = MiningBytes.Unpack(0x1D00FFFF);
+            this.Challenge = FarmingBytes.LessOrEqualThan;
+            this.ChallengeValue = FarmingBytes.Unpack(0x1D00FFFF);
 
             this.HashRecipe = new[] { CryptoHashName.Sha256 };
         }

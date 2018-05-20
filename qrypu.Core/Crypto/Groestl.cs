@@ -214,7 +214,12 @@ namespace qrypu.Core.Crypto
         /// </summary>
         protected UInt64[] _initHash;
         protected int _bufferLength;
+
+        /// <summary>
+        /// Number of bits in hash result
+        /// </summary>
         protected int _bitLen;
+        public int BitLen => _bitLen;
 
         /// <summary>
         /// Call to set result bit len and internal mode of operation

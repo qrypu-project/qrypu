@@ -1,27 +1,28 @@
 ﻿/*
  * (C) 2018 José Hurtado
  * 
- * ES:
+ * ES: Contiene los resultados del proceso de labrado
+ * 
  * Licencia: para este archivo se aplica: https://opensource.org/licenses/MIT
  */
-namespace qrypu.Core.Mining
+namespace qrypu.Core.Farming
 {
     using System;
 
     /// <summary>
-    /// ES: Resultado de minado
+    /// ES: Resultado de labrado
     /// </summary>
-    public class MiningResult
+    public class FarmingResult
     {
         /// <summary>
         /// ES: datos a los que se calcula el hash
-        /// Si en la configuración MininConfig indica NonceInData=true, Data contiene el Nonce
+        /// Si en la configuración FarmingConfig indica NonceInData=true, Data contiene el Nonce
         /// en la posición indicada en NoncePosition.
         /// </summary>
         public byte[] Data { get; set; }
 
         /// <summary>
-        /// ES: Nonce calculado en el minado
+        /// ES: Nonce calculado en el labrado
         /// </summary>
         public byte[] Nonce { get; set; }
 
@@ -41,8 +42,8 @@ namespace qrypu.Core.Mining
         public float HashPerSecond { get; set; }
 
         /// <summary>
-        /// ES: Tiempo trasncurrido durante el minado
+        /// ES: Tiempo trasncurrido durante el labrado
         /// </summary>
-        public long MiningTime { get; set; }
+        public long FarmingTime { get; set; }
     }
 }

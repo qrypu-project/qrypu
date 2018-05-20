@@ -75,7 +75,12 @@ namespace qrypu.Core.Crypto
         protected int _stateWords;
         protected int _bufferLength;
         protected UInt64[] _initState;
+
+        /// <summary>
+        /// Number of bits in hash result
+        /// </summary>
         protected int _bitLen;
+        public int BitLen => _bitLen;
 
         protected SkeinFlags SetType(BlockType type, SkeinFlags extraFlag = SkeinFlags.None)
         {

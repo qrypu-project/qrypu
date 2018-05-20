@@ -166,7 +166,12 @@ namespace qrypu.Core.Crypto
         /// An instance can Compute multiple hashes while result bit len not change.
         /// </summary>
         private UInt64[,] _initState;
-        private int _bitLen;
+
+        /// <summary>
+        /// Number of bits in hash result
+        /// </summary>
+        protected int _bitLen;
+        public int BitLen => _bitLen;
 
         /// <summary>
         /// Call to set result bit len and internal mode of operation
